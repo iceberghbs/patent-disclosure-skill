@@ -44,6 +44,9 @@ def _local_mmdc() -> tuple[list[str], bool] | None:
     else:
         cand = here / "node_modules" / ".bin" / "mmdc"
     if cand.is_file():
+        puppeteer_cfg = here / "puppeteer-config.json"
+        if puppeteer_cfg.is_file():
+            return [str(cand), "-p", str(puppeteer_cfg)], False
         return [str(cand)], False
     return None
 
