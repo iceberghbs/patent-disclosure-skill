@@ -68,12 +68,32 @@ pip install -r requirements.txt
 
 ## 可选：国知局公布公告站抓取（Step 5 查新优先路径）
 
-若需使用 **`tools/cnipa_epub_search.py`**（一步，推荐）或 **`tools/cnipa_epub_crawler.py`** / **`tools/cnipa_epub_parse.py`**（[epub.cnipa.gov.cn](http://epub.cnipa.gov.cn/)，见 `prompts/prior_art_search.md`）：
+若需使用 **`tools/cnipa_epub_search.py`**（一步，推荐）或 **`tools/cnipa_epub_crawler.py`** / **`tools/cnipa_epub_parse.py`**（[epub.cnipa.gov.cn](http://epub.cnipa.gov.cn/)，见 `prompts/prior_art_search.md`），**浏览器后端二选一**：
+
+### 方式一：Playwright（Python，默认）
 
 ```bash
 pip install -r tools/requirements-cnipa.txt
 python -m playwright install chromium
 ```
+
+### 方式二：agent-browser（Rust CLI，可选）
+
+[agent-browser](https://agent-browser.dev) 是面向 AI Agent 的纯 Rust 浏览器自动化 CLI（通过 CDP 驱动 Chrome），更贴合 Agent/Shell 驱动的工作流，无须 Python 浏览器依赖：
+
+```bash
+npm i -g agent-browser
+agent-browser install          # 首次使用下载 Chrome
+```
+
+两种后端通过环境变量 **`EPUB_BROWSER_BACKEND`** 切换（默认 `auto`：agent-browser 在 PATH 且 Playwright 未装时自动降级到 agent-browser）：
+
+```bash
+EPUB_BROWSER_BACKEND=agent-browser python tools/cnipa_epub_search.py 图像拼接
+EPUB_BROWSER_BACKEND=playwright   python tools/cnipa_epub_search.py 图像拼接
+```
+
+agent-browser 后端额外环境变量：`AGENT_BROWSER_BIN`（可执行路径）、`AGENT_BROWSER_HEADED=1`（有界面调试）、`AGENT_BROWSER_TIMEOUT`（单命令超时秒）。
 
 **Windows 终端中文**：`cnipa_epub_search.py` / `cnipa_epub_crawler.py` 已对 stdout/stderr 尝试 **UTF-8**（`reconfigure`）。若仍乱码，可在运行前执行 **`chcp 65001`**，或设置环境变量 **`PYTHONUTF8=1`**，以便复制 **`EPUB_HITS_JSON:`** 一行给 Agent 时不误判为失败。
 

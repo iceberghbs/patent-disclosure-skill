@@ -9,7 +9,7 @@
 ### A. 中国专利公布公告（**优先**，官方站点）
 
 1. **站点**：[国家知识产权局 中国专利公布公告](http://epub.cnipa.gov.cn/)（**仅** `epub.cnipa.gov.cn`）。
-2. **工具**（本仓库 `tools/`）：**`cnipa_epub_search.py`** —— **一步**完成公布站检索与结果解析（Playwright 过站点 WAF）；结果页 HTML **仅在内存中处理，不落盘**。成功时终端含 **`EPUB_NOTE:`**（ASCII，如 `html_bytes=… disk=0`）与 **`EPUB_HITS_JSON:`** 一行（JSON 数组：标题、公开号、链接、**`abstract`** 等）。
+2. **工具**（本仓库 `tools/`）：**`cnipa_epub_search.py`** —— **一步**完成公布站检索与结果解析（浏览器后端过站点 WAF）；结果页 HTML **仅在内存中处理，不落盘**。成功时终端含 **`EPUB_NOTE:`**（ASCII，如 `html_bytes=… disk=0`）与 **`EPUB_HITS_JSON:`** 一行（JSON 数组：标题、公开号、链接、**`abstract`** 等）。stderr 另有一行 **`EPUB_BACKEND:`** 指示本次所用后端（`playwright` / `agent-browser`）。
 3. **国知局检索词（生成阶段必做，须在拼 Bash 之前完成）**
 
    - **拆分责任在 Agent**：在**生成/构造命令阶段**，从本案技术方案、专利点或用户主题中归纳 **2～8 个与方案相关度高的检索单位**，**仅用 ASCII 空格分隔**，再写入 `cnipa_epub_search.py` 的参数。每一单位宜为 **有检索意义的语义块**，例如：**专业术语**、**名词短语**、**名动组合（如「批量调度」「异构调度」）**、**业内固定搭配**；**不要**拆成过碎的单字、泛义双字（如单独 `检索`、`增强`、`系统`、`方法` 等泛词），也**不要**把无关联词硬凑成一串。
@@ -28,8 +28,9 @@
 4. **执行方式**（Step 5 在读完本文件后**先尝试**）：
 
    ```bash
-   pip install -r tools/requirements-cnipa.txt
-   python -m playwright install chromium
+   # 后端二选一（默认 auto：Playwright 优先，未装时自动降级 agent-browser）：
+   #   Playwright:   pip install -r tools/requirements-cnipa.txt && python -m playwright install chromium
+   #   agent-browser: npm i -g agent-browser && agent-browser install
    # Agent：对上一节每个检索单位各执行一次（示例仅展示首轮）
    python3 ${CLAUDE_SKILL_DIR}/tools/cnipa_epub_search.py 词甲
    ```

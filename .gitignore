@@ -16,6 +16,9 @@ __pycache__/
 venv/
 *.egg-info/
 
+# 测试产物（test_math_render.py 输出）
+tests/_math_test_figures/
+
 # OS
 .DS_Store
 Thumbs.db

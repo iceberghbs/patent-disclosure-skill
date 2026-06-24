@@ -30,7 +30,21 @@
 若需将结果页 HTML 保存到磁盘，请改用 ``cnipa_epub_crawler.py``；若只对已有 HTML 文件做解析，
 请用 ``cnipa_epub_parse.py``。
 
-环境变量：与 ``cnipa_epub_crawler.py`` 相同（如 ``EPUB_WAF_MAX_WAIT_SEC``、``PLAYWRIGHT_HEADED``）。
+--------------------------------------------------------------------------------
+浏览器后端（二选一）
+--------------------------------------------------------------------------------
+- **Playwright**（默认）：``pip install -r tools/requirements-cnipa.txt && python -m playwright install chromium``
+- **agent-browser**（可选，纯 Rust CLI）：``npm i -g agent-browser && agent-browser install``
+  更贴合 Agent/CLI 驱动的工作流；无须 Python 浏览器依赖。
+
+通过环境变量 ``EPUB_BROWSER_BACKEND`` 选择：
+- ``playwright``（默认）：走当前 Playwright 路径。
+- ``agent-browser``：走 ``cnipa_epub_agent_browser`` 模块。
+- ``auto``（未显式设置时的策略）：若 agent-browser 在 PATH 上 **且** Playwright 未安装，
+  自动降级到 agent-browser；否则维持 Playwright。
+
+环境变量：与 ``cnipa_epub_crawler.py`` 相同（如 ``EPUB_WAF_MAX_WAIT_SEC``、``PLAYWRIGHT_HEADED``）；
+agent-browser 后端另见 ``AGENT_BROWSER_BIN`` / ``AGENT_BROWSER_HEADED`` / ``AGENT_BROWSER_TIMEOUT``。
 """
 from __future__ import annotations
 
@@ -77,10 +91,67 @@ def _dedupe_hits(hits_lists: list) -> list:
     return out
 
 
+def _select_backend() -> str:
+    """决定浏览器后端：playwright | agent-browser。
+
+    策略：环境变量 ``EPUB_BROWSER_BACKEND`` 显式优先；未设时取 ``auto``——
+    若 agent-browser 在 PATH 且 Playwright 未装，降级到 agent-browser，否则维持 Playwright。
+    """
+    choice = os.environ.get("EPUB_BROWSER_BACKEND", "auto").strip().lower() or "auto"
+    if choice in ("playwright", "agent-browser"):
+        return choice
+    if choice in ("auto", "automatic", ""):
+        try:
+            import playwright  # noqa: F401
+
+            return "playwright"
+        except ImportError:
+            try:
+                from cnipa_epub_agent_browser import is_available
+
+                if is_available():
+                    return "agent-browser"
+            except Exception:
+                pass
+            return "playwright"
+    return "playwright"
+
+
+def _load_backend(backend: str):
+    """返回 (search_fn, hits_to_jsonable)；search_fn(keyword) -> (html, hits)。"""
+    if backend == "agent-browser":
+        try:
+            from cnipa_epub_agent_browser import search_epub_keyword
+        except ImportError as e:
+            print("ERROR: agent-browser 后端加载失败: %s" % e, file=sys.stderr)
+            raise
+        from cnipa_epub_parse import hits_to_jsonable
+
+        return search_epub_keyword, hits_to_jsonable
+
+    # playwright（默认）
+    try:
+        import playwright  # noqa: F401
+    except ImportError:
+        print(
+            "ERROR: pip install -r tools/requirements-cnipa.txt && python -m playwright install chromium",
+            file=sys.stderr,
+        )
+        raise
+    from cnipa_epub_crawler import search_epub_keyword
+    from cnipa_epub_parse import hits_to_jsonable
+
+    return search_epub_keyword, hits_to_jsonable
+
+
 def _usage() -> None:
     print("usage: python tools/cnipa_epub_search.py <term> [more terms...]", file=sys.stderr)
     print(
-        "whitespace splits to multiple terms; one Playwright run per term; merge by pub_number.",
+        "whitespace splits to multiple terms; one browser run per term; merge by pub_number.",
+        file=sys.stderr,
+    )
+    print(
+        "backend: EPUB_BROWSER_BACKEND=playwright|agent-browser|auto (default auto)",
         file=sys.stderr,
     )
     print('example: python tools/cnipa_epub_search.py "batch 调度 异构"', file=sys.stderr)
@@ -103,17 +174,10 @@ def main(argv: list[str] | None = None) -> int:
 
     os.environ.setdefault("EPUB_WAF_MAX_WAIT_SEC", "180")
 
-    try:
-        import playwright  # noqa: F401
-    except ImportError:
-        print(
-            "ERROR: pip install -r tools/requirements-cnipa.txt && python -m playwright install chromium",
-            file=sys.stderr,
-        )
-        return 1
+    backend = _select_backend()
+    print("EPUB_BACKEND: %s" % backend, file=sys.stderr, flush=True)
 
-    from cnipa_epub_crawler import search_epub_keyword
-    from cnipa_epub_parse import hits_to_jsonable
+    search_fn, hits_to_jsonable = _load_backend(backend)
 
     multi = len(terms) > 1
     last_html = ""
@@ -121,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         for kw in terms:
-            html, hits = search_epub_keyword(kw)
+            html, hits = search_fn(kw)
             last_html = html
             all_batches.append(hits)
     except Exception as e:

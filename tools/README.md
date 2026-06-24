@@ -6,11 +6,21 @@
 
 | 脚本 | 作用 |
 |------|------|
-| **`cnipa_epub_search.py`** | **（Step 5 优先）** 一步：拉取 + 解析，**不写结果页 HTML 落盘**；**Agent 须按 `prior_art_search.md` 分多次调用、每轮一词并自行合并 JSON**；脚本在**单次命令多词**时也会进程内循环检索并合并（人工/本地便利）；**stdout 仅一行** `EPUB_HITS_JSON:`；stderr 上 `EPUB_*` 为 **ASCII**；UTF-8 / PowerShell 见 **INSTALL.md**。 |
-| **`cnipa_epub_crawler.py`** | 仅 Playwright 拉取并**默认保存**结果页 HTML；stdout 亦含 **`EPUB_HITS_JSON:`**。 |
+| **`cnipa_epub_search.py`** | **（Step 5 优先）** 一步：拉取 + 解析，**不写结果页 HTML 落盘**；**Agent 须按 `prior_art_search.md` 分多次调用、每轮一词并自行合并 JSON**；脚本在**单次命令多词**时也会进程内循环检索并合并（人工/本地便利）；**stdout 仅一行** `EPUB_HITS_JSON:`；stderr 上 `EPUB_*` 为 **ASCII**；UTF-8 / PowerShell 见 **INSTALL.md**。支持 **两种浏览器后端**（见下）。 |
+| **`cnipa_epub_crawler.py`** | Playwright 后端：拉取并**默认保存**结果页 HTML；stdout 亦含 **`EPUB_HITS_JSON:`**。 |
+| **`cnipa_epub_agent_browser.py`** | agent-browser 后端（可选）：与 `cnipa_epub_crawler.py` 契约等价（`fetch_epub_result_html(keyword) -> str`），通过 `agent-browser` Rust CLI（CDP 驱动 Chrome）完成同样的 WAF 等待 / 表单提交 / 结果页取 HTML。`EPUB_BROWSER_BACKEND=agent-browser` 时由 `cnipa_epub_search.py` 自动调用。 |
 | **`cnipa_epub_parse.py`** | 仅解析已保存的 HTML：`python tools/cnipa_epub_parse.py path/to/_last_result_xxx.html`；字段含标题、公开号、链接、**`abstract`**（若有）。 |
 
-依赖：`pip install -r tools/requirements-cnipa.txt` 与 `python -m playwright install chromium`。环境变量见各脚本文件头。默认结果 HTML 落在 **`tools/_last_result_*.html`**（已 `.gitignore`）。
+### 浏览器后端（二选一，由 `cnipa_epub_search.py` 统一调度）
+
+| 后端 | 安装 | 环境变量切换 |
+|------|------|--------------|
+| **Playwright**（默认） | `pip install -r tools/requirements-cnipa.txt && python -m playwright install chromium` | `EPUB_BROWSER_BACKEND=playwright` |
+| **agent-browser**（可选） | `npm i -g agent-browser && agent-browser install` | `EPUB_BROWSER_BACKEND=agent-browser` |
+
+未显式设置时取 `auto`：agent-browser 在 PATH **且** Playwright 未装时自动降级到 agent-browser，否则维持 Playwright。agent-browser 后端另支持 `AGENT_BROWSER_BIN` / `AGENT_BROWSER_HEADED` / `AGENT_BROWSER_TIMEOUT`。
+
+默认结果 HTML 落在 **`tools/_last_result_*.html`**（已 `.gitignore`）。
 
 抓取失败或解析无命中时，Agent 按 **`prompts/prior_art_search.md`** 降级 **WebSearch**（如 Google 学术 / Google Patents）。
 
