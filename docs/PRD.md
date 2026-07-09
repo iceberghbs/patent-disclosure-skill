@@ -46,8 +46,8 @@ Step 8  内部自检（prompts/disclosure_self_check.md）→ 修订后交付
 - Office 原材料（Word/PPT）：使用本仓库 `tools/docx_to_md.py`、`tools/pptx_to_md.py` 转换后再扫描（见 `SKILL.md`）。
 - 交底书正文**不得**包含「自检清单」章节。
 - 脱敏要求见 `disclosure_builder.md` / `template_reference.md`。
-- 查新结论须写入第一章并与技术问题、方案呼应；渠道与著录细则见 `prompts/prior_art_search.md`。
-- 交底书定稿须**同时**交付 Markdown 与 Word；文件名 **`{案件名}_{YYYYMMDDHHmmss}`**（§7.3 第 5 点，含首次与迭代）；`tools/mermaid_render.py` 默认调用 `md_to_docx.py`；Word 失败时允许人工补转（见 `tools/README.md`）。
+- 查新结论须写入第三章 3.1 并与技术问题、方案呼应；渠道与著录细则见 `prompts/prior_art_search.md`。
+- 交底书定稿须**同时**交付 Markdown 与 Word；文件名 **`{案件名}_{YYYYMMDDHHmmss}`**（§7.3 第 5 点，含首次与迭代）；`tools/build_docx.py` 一步生成含 OMML 原生公式的 `.docx`（pandoc 失败时 fallback 到 `md_to_docx.py`，见 `tools/README.md`）。
 
 ## 5. 环境变量
 
