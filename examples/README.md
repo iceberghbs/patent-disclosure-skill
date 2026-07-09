@@ -36,7 +36,7 @@
 
 4. **验收「效果」**
 
-   - 打开你指定的输出目录（如 `outputs/某练习目录/`，整目录不提交 Git），检查是否生成专利点、查新笔记、摘要预览、交底书（**Markdown + Word**，文件名含 **案件名 + 时间戳**）。
+   - 打开你指定的输出目录（如 `outputs/某练习目录/`，整目录不提交 Git），检查是否生成专利点、查新笔记、摘要预览、交底书（**Markdown + Word**，文件名含 **交底书名 + 时间戳**）。
    - 定稿须经 `tools/build_docx.py`（需 Node.js + mmdc、pandoc；`tools` 下可选 `npm install`）。详见 `tools/README.md`。
 
 5. **版本与迭代**
@@ -51,5 +51,5 @@
 
    ```text
    在现有交底书 outputs/.../一种XXX_时间戳.md 上：
-   - 合并附录里的新实施例（偏 merger）；或修正 5.2.1 与正文公式不一致（偏 correction_handler）
+   - 合并附录里的新实施例（偏 merger）；或修正 4.2.1 与正文公式不一致（偏 correction_handler）
    ```

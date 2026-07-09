@@ -44,7 +44,7 @@
 ### 用法
 
 ```bash
-# 写出定稿 .md，并在同目录生成同名 .docx（默认）；-o 须为「案件名_YYYYMMDDHHmmss.md」（见 prompts/disclosure_builder.md §7.3 第 5 点）
+# 写出定稿 .md，并在同目录生成同名 .docx（默认）；-o 须为「交底书名_YYYYMMDDHHmmss.md」（见 prompts/disclosure_builder.md §7.3 第 5 点）
 python3 tools/build_docx.py -i draft.md -o "一种XXX方法及系统_20260408143025.md"
 
 # 仅 Markdown，不要 Word
@@ -60,7 +60,7 @@ python3 tools/build_docx.py -i draft.md -o out/一种XXX方法及系统_20260408
 
 ### 与交底书约定
 
-- 技能要求定稿**同时**交付 **Markdown + Word**，且 **`-o` 主文件名须含 `_{YYYYMMDDHHmmss}`**（`prompts/disclosure_builder.md` §7.3 第 5 点，含首次定稿）；**5.1 系统框图**与 **5.2 流程图**均用 fenced mermaid（**须** B/W 主题），**不要** ASCII 文字流程图或框图。
+- 技能要求定稿**同时**交付 **Markdown + Word**，且 **`-o` 主文件名须含 `_{YYYYMMDDHHmmss}`**（`prompts/disclosure_builder.md` §7.3 第 5 点，含首次定稿）；**4.1 系统框图**与 **4.2 流程图**均用 fenced mermaid（**须** B/W 主题），**不要** ASCII 文字流程图或框图。
 - 交付代理人前：运行 `build_docx.py` 一步即可。
 
 > 旧版 `mermaid_render.py` 已移除，其功能由 `build_docx.py` 替代（mermaid → PNG + pandoc OMML）。
@@ -162,8 +162,8 @@ python3 tools/md_to_docx.py -i a.md -o a.docx --image-max-width-inches 6 --image
 
 ```bash
 python3 tools/iteration_dialog_log.py --case-dir outputs/某案件 --kind merge \
-  --user "补充了调度装置资料，合并进第三章" \
-  --summary "已扩写 3.4，并更新实施例；未改保护点表述。" \
+  --user "补充了调度装置资料，合并进第一章" \
+  --summary "已扩写 3.4，并更新实施例；未改发明点表述。" \
   --artifacts "一种XXX方法及系统_20260408143025.md,一种XXX方法及系统_20260408143025.docx"
 ```
 

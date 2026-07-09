@@ -64,7 +64,7 @@ git clone <本仓库 URL> "$env:USERPROFILE\.cursor\skills\patent-disclosure-ski
 pip install -r requirements.txt
 ```
 
-交底书定稿须同时产出 **.md + .docx**，且将 **mermaid**（**5.1 系统框图**与 **5.2 流程图**，**须** B/W 主题）经 **`tools/build_docx.py`**（调用 `mmdc` + `pandoc`）转为 PNG 嵌入并生成含 OMML 原生公式的 Word。**mermaid** 须 **Node.js**：在 **`tools/`** 执行 **`npm install`**（含 **`puppeteer`**）；若 **`mmdc`** 报找不到 Chrome，再执行 **`npx puppeteer browsers install chrome-headless-shell`**。**pandoc** 须 `apt-get install pandoc`。详见 **`tools/README.md`**。
+交底书定稿须同时产出 **.md + .docx**，且将 **mermaid**（**4.1 系统框图**与 **4.2 流程图**，**须** B/W 主题）经 **`tools/build_docx.py`**（调用 `mmdc` + `pandoc`）转为 PNG 嵌入并生成含 OMML 原生公式的 Word。**mermaid** 须 **Node.js**：在 **`tools/`** 执行 **`npm install`**（含 **`puppeteer`**）；若 **`mmdc`** 报找不到 Chrome，再执行 **`npx puppeteer browsers install chrome-headless-shell`**。**pandoc** 须 `apt-get install pandoc`。详见 **`tools/README.md`**。
 
 ## 可选：国知局公布公告站抓取（Step 5 查新优先路径）
 

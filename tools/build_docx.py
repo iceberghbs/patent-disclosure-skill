@@ -5,7 +5,7 @@ One-step: render mermaid (B/W) & convert .md -> .docx with OMML math.
 Pipeline: mmdc -t neutral -b white -e png -> pandoc --mathml
 
 Usage:
-  python3 tools/build_docx.py -i draft.md -o "案件名_YYYYMMDDHHmmss.md"
+  python3 tools/build_docx.py -i draft.md -o "交底书名_YYYYMMDDHHmmss.md"
   python3 tools/build_docx.py -i draft.md -o out/定稿.md --no-docx
   python3 tools/build_docx.py -i draft.md -o out/定稿.md --assets-dir figures/mermaid
 
