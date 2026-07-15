@@ -14,7 +14,8 @@
 | `SKILL.md` | 触发条件、工具映射、步骤顺序、`prompts/` 索引 |
 | `prompts/` | 分步模板（录入、扫描、专利点、查新、预览、成文、自检、迭代） |
 | `prompts/template_reference.md` | 交底书章节细则与 mermaid 图示范例 |
-| `tools/` | `build_docx.py`、`md_to_docx.py`、`docx_to_md.py`、`pptx_to_md.py`、`cnipa_epub_search.py`、`cnipa_epub_crawler.py`、`cnipa_epub_parse.py` 等；mermaid 须 Node；Word 须 pandoc；国知局抓取须 Playwright，见 `tools/README.md` |
+| `reference/` | 交底书模板（`disclosure_template.md`，含 guardrails）与查新检索报告模板（`search_report_template.doc`） |
+| `tools/` | `build_docx.py`（一步生成 B/W mermaid PNG + OMML `.docx`）、`md_to_docx.py`（fallback）、`docx_to_md.py`、`pptx_to_md.py`、`cnipa_epub_search.py`、`cnipa_epub_crawler.py`、`cnipa_epub_parse.py` 等；mermaid 须 Node；Word 须 pandoc；国知局抓取须 Playwright，见 `tools/README.md` |
 | `examples/example_batch_job_scheduler/` | 示例案件：仅 **`knowledge/`** 虚构原材料（专利点 / 交底书等由流程生成到 `outputs/`） |
 | `docs/PRD.md` | 流程与约束摘要 |
 | `docs/skill-structure.md` | 本仓库结构说明 |

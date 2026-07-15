@@ -69,7 +69,7 @@ python3 tools/build_docx.py -i draft.md -o out/一种XXX方法及系统_20260408
 
 ## math_render.py — LaTeX 公式 → PNG
 
-将 Markdown 中的 **LaTeX 公式**（``$...$`` / ``\\(...\\)`` 行内；``$$...$$`` / ``\\[...\\]`` 块级）用 **matplotlib mathtext** 渲染为 PNG；**保留 LaTeX 原文**，图片引用写入 HTML 注释 ``<!-- ![...](math_figures/...) -->``（Markdown 预览不显示图），供 **`md_to_docx.py`** 嵌入 Word。（交底书本身仅用 `$...$` / `$$...$$`，此工具另兼容 `\(...\)` 等旧写法，仅供 fallback 路径使用。）
+将 Markdown 中的 **LaTeX 公式**（``$...$`` / ``\\(...\\)`` 行内；``$$...$$`` / ``\\[...\\]`` 块级）用 **matplotlib mathtext** 渲染为 PNG；**保留 LaTeX 原文**，图片引用写入 HTML 注释 ``<!-- ![...](math_figures/...) -->``（Markdown 预览不显示图），供 **`md_to_docx.py`** 嵌入 Word。**交底书正文禁止使用 `\(...\)` / `\[...\]`**（mmdc 会损坏 `\[...\]`），仅 fallback 工具内部接受这些写法做兼容渲染。
 
 **Mermaid 框图**：``build_docx.py`` 调用 `mmdc` **保留** `` ```mermaid`` 源码，并追加 ``<!-- ![图示 n](mermaid_figures/...) -->``（预览隐藏图引用，Word 仍大图嵌入）。
 
